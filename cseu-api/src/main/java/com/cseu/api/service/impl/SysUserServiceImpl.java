@@ -31,6 +31,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Log(desc = "测试", type = 1, value = "1")
     @Lock(model = "user:", key = "userId:", locktime = 60)
     public boolean save(SysUser sysUser) {
+        sysUser.setDelFlag("2");
         return sysUserMapper.insert(sysUser) > 0 ? true : false;
     }
 }

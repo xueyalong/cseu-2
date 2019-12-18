@@ -2,7 +2,7 @@ package com.cseu.common.aop;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cseu.common.annotation.Lock;
-import com.cseu.common.core.SysUser;
+import com.cseu.common.core.SysUserEs;
 import com.cseu.common.exception.CseuException;
 import com.cseu.common.lock.RedisLock;
 import com.google.common.collect.Maps;
@@ -15,11 +15,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
-import org.springframework.data.elasticsearch.core.query.IndexQuery;
-import org.springframework.data.elasticsearch.core.query.IndexQueryBuilder;
 import org.springframework.data.redis.core.RedisTemplate;
-import utils.ElasticSearchUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -38,8 +34,7 @@ public class LockAop {
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
-    @Autowired
-    private ElasticsearchTemplate elasticsearchTemplate;
+
 
     @Pointcut("@annotation(lock)")
     public void annotationLock(Lock lock) {
@@ -76,19 +71,9 @@ public class LockAop {
                 }
             });
         }
-        savelog(key, JSONObject.toJavaObject(JSONObject.parseObject(JSONObject.toJSONString(params.get(0))),SysUser.class));
+        log.info("lokc {}={}",method,args);
+        List<SysUserEs> sysUserEs = JSONObject.parseArray(JSONObject.toJSONString(args), SysUserEs.class);
         return true;
     }
 
-    private void savelog(String key, Object obj) {
-        ElasticSearchUtils elasticSearchUtils=new ElasticSearchUtils(elasticsearchTemplate);
-        SysUser sysUser= (SysUser) obj;
-        IndexQuery indexQuery=new IndexQueryBuilder()
-                .withIndexName("sys_user")
-                .withId(String.valueOf(sysUser.getUserId()))
-                .withObject(sysUser)
-                .build();
-
-        elasticSearchUtils.setData(indexQuery);
-    }
 }
