@@ -2,6 +2,7 @@ package com.cseu.common.component;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.cseu.common.annotation.MQ;
 import com.cseu.common.core.SysUserEs;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
@@ -146,6 +147,7 @@ public class ElasticSearchService {
      * @date 2019/10/17 17:27
      * @since
      */
+    @MQ
     public void insertOrUpdateOne(String idxName, Map<String, Object> map) {
         IndexRequest request = new IndexRequest(idxName, idxName);
         request.id(MapUtils.getString(map, "id")).source(map, XContentType.JSON);

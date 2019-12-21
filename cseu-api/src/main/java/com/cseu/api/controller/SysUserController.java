@@ -37,7 +37,6 @@ public class SysUserController {
 
 
     @GetMapping("u")
-    @Async()
     public Object getUser() {
         SnowflakeIdWorker snowflake = new SnowflakeIdWorker(1, 1);
         for(int i=0;i<1000000;i++){
